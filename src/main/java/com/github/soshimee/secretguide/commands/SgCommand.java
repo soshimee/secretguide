@@ -4,11 +4,14 @@ import com.github.soshimee.secretguide.SecretGuide;
 import com.github.soshimee.secretguide.config.SecretGuideConfig;
 import com.github.soshimee.secretguide.features.SecretAura;
 import com.github.soshimee.secretguide.utils.ChatUtils;
+import com.github.soshimee.secretguide.utils.DungeonLocationUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class SgCommand extends CommandBase {
 	@Override
@@ -26,17 +29,15 @@ public class SgCommand extends CommandBase {
 		if (args.length < 1) {
 			SecretGuide.config.openGui();
 			ChatUtils.sendModMessage("/sg t | /sg c");
-			return;
-		}
-		if (args[0].startsWith("t")) {
+		} else if (Objects.equals(args[0], "roomid")) {
+			Minecraft mc = Minecraft.getMinecraft();
+			ChatUtils.sendModMessage(String.valueOf(DungeonLocationUtils.getCurrentRoomId()));
+		} else if (args[0].startsWith("t")) {
 			SecretGuideConfig.secretAuraEnabled = !SecretGuideConfig.secretAuraEnabled;
 			ChatUtils.sendModMessage(SecretGuideConfig.secretAuraEnabled ? "Secret Aura enabled!" : "Secret Aura disabled!");
-			return;
-		}
-		if (args[0].startsWith("c")) {
+		} else if (args[0].startsWith("c")) {
 			SecretAura.clearBlocks();
 			ChatUtils.sendModMessage("Blocks cleared!");
-			return;
 		}
 	}
 

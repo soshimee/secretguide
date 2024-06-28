@@ -4,6 +4,7 @@ import com.github.soshimee.secretguide.commands.SgCommand;
 import com.github.soshimee.secretguide.config.SecretGuideConfig;
 import com.github.soshimee.secretguide.features.AutoClose;
 import com.github.soshimee.secretguide.features.SecretAura;
+import com.github.soshimee.secretguide.utils.DungeonLocationUtils;
 import com.github.soshimee.secretguide.utils.LocationUtils;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,6 +21,7 @@ public class SecretGuide {
 		MinecraftForge.EVENT_BUS.register(new SecretAura());
 		MinecraftForge.EVENT_BUS.register(new AutoClose());
 		MinecraftForge.EVENT_BUS.register(new LocationUtils());
+		MinecraftForge.EVENT_BUS.register(new DungeonLocationUtils());
 		ClientCommandHandler.instance.registerCommand(new SgCommand());
 	}
 }

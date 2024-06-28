@@ -1,13 +1,7 @@
 package com.github.soshimee.secretguide.utils;
 
-import cc.polyfrost.oneconfig.events.EventManager;
-import cc.polyfrost.oneconfig.events.event.LocrawEvent;
-import cc.polyfrost.oneconfig.libs.eventbus.Subscribe;
-import cc.polyfrost.oneconfig.utils.hypixel.LocrawInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.scoreboard.Score;
-import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -22,15 +16,13 @@ public class LocationUtils {
 		OTHER
 	}
 
-	private static LocationType currentLocation = LocationType.OTHER;
-
-	@SubscribeEvent
-	public void onWorldLoad(WorldEvent.Load event) {
-		currentLocation = LocationType.OTHER;
+	public LocationUtils() {
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-		executor.schedule(() -> {
+		executor.scheduleAtFixedRate(() -> {
+			currentLocation = LocationType.OTHER;
 			Minecraft mc = Minecraft.getMinecraft();
 			WorldClient world = mc.theWorld;
+			if (world == null) return;
 			Scoreboard scoreboard = world.getScoreboard();
 			if (scoreboard == null) return;
 			for (String line : ScoreboardUtils.getSidebarScores(scoreboard)) {
@@ -39,8 +31,14 @@ public class LocationUtils {
 					return;
 				}
 			}
-			currentLocation = LocationType.OTHER;
-		}, 2500, TimeUnit.MILLISECONDS);
+		}, 1000, 1000, TimeUnit.MILLISECONDS);
+	}
+
+	private static LocationType currentLocation = LocationType.OTHER;
+
+	@SubscribeEvent
+	public void onWorldLoad(WorldEvent.Load event) {
+		currentLocation = LocationType.OTHER;
 	}
 
 	public static LocationType getCurrentLocation() {

@@ -4,9 +4,7 @@ import cc.polyfrost.oneconfig.events.EventManager;
 import cc.polyfrost.oneconfig.events.event.ReceivePacketEvent;
 import cc.polyfrost.oneconfig.libs.eventbus.Subscribe;
 import com.github.soshimee.secretguide.config.SecretGuideConfig;
-import com.github.soshimee.secretguide.utils.BlockUtils;
-import com.github.soshimee.secretguide.utils.LocationUtils;
-import com.github.soshimee.secretguide.utils.PacketUtils;
+import com.github.soshimee.secretguide.utils.*;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockSkull;
@@ -55,11 +53,13 @@ public class SecretAura {
 		BlockPos blockPos2 = new BlockPos(eyePos.xCoord + SecretGuideConfig.secretAuraRange, eyePos.yCoord + SecretGuideConfig.secretAuraRange, eyePos.zCoord + SecretGuideConfig.secretAuraRange);
 		Iterable<BlockPos> positions = BlockPos.getAllInBox(blockPos1, blockPos2);
 		long time = new Date().getTime();
+		int roomId = DungeonLocationUtils.getCurrentRoomId();
 		for (BlockPos position : positions) {
 			if (blocksDone.contains(position)) continue;
 			if (blocksCooldown.containsKey(position) && blocksCooldown.get(position) + 500 > time) continue;
 			IBlockState blockState = world.getBlockState(position);
 			if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
+				if (roomId == 2051424561 || roomId == 884728242 || roomId == -269974565 || roomId == 1262122263 || roomId == 1073658098 || roomId == -476788643) continue;
 				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.4375, position.getZ() + 0.5);
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375, eyePos, centerPos);
@@ -70,6 +70,7 @@ public class SecretAura {
 					break;
 				}
 			} else if (blockState.getBlock() == Blocks.lever) {
+				if (roomId == -109725212 || roomId == -353291158 || roomId == 1998063202 || roomId == 660384222 || roomId == -1012522341 || roomId == 660396563 || roomId == 1980639456 || roomId == 43497702 || roomId == 2014437159 || roomId == 1513261276 || roomId == 862140000 || roomId == -364886424 || roomId == -714138899 || roomId == -1489069695 || roomId == -685683836) continue;
 				BlockLever.EnumOrientation orientation = (BlockLever.EnumOrientation) blockState.getProperties().get(BlockLever.FACING);
 				float minX, minY, minZ, maxX, maxY, maxZ;
 				if (orientation == BlockLever.EnumOrientation.EAST) {
@@ -187,6 +188,7 @@ public class SecretAura {
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0, 0, 0, 1, 1, 1, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
+					if (movingObjectPosition.sideHit == EnumFacing.DOWN) continue;
 					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
 						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
 						continue;
