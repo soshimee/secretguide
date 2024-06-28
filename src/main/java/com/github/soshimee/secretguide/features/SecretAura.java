@@ -10,14 +10,12 @@ import com.github.soshimee.secretguide.utils.PacketUtils;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.block.BlockLever;
 import net.minecraft.block.BlockSkull;
-import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.network.play.client.C0APacketAnimation;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S24PacketBlockAction;
@@ -36,6 +34,7 @@ import java.util.*;
 public class SecretAura {
 	private static final List<BlockPos> blocksDone = new LinkedList<>();
 	private static final Map<BlockPos, Long> blocksCooldown = new HashMap<>();
+	private static boolean redstoneKey = false;
 
 	public SecretAura() {
 		EventManager.INSTANCE.register(this);
@@ -60,7 +59,7 @@ public class SecretAura {
 			if (blocksDone.contains(position)) continue;
 			if (blocksCooldown.containsKey(position) && blocksCooldown.get(position) + 500 > time) continue;
 			IBlockState blockState = world.getBlockState(position);
-			if (blockState.getBlock() == Blocks.chest) {
+			if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
 				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.4375, position.getZ() + 0.5);
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375, eyePos, centerPos);
@@ -169,11 +168,29 @@ public class SecretAura {
 				GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
 				if (profile == null) continue;
 				String profileId = profile.getId().toString();
-				if (!Objects.equals(profileId, "26bb1a8d-7c66-31c6-82d5-a9c04c94fb02") && !Objects.equals(profileId, "edb0155f-379c-395a-9c7d-1b6005987ac8") && !Objects.equals(profileId, "4958989c-6d16-3445-8b46-3f91955df412")) continue;
+				if (!Objects.equals(profileId, "26bb1a8d-7c66-31c6-82d5-a9c04c94fb02") && !Objects.equals(profileId, "edb0155f-379c-395a-9c7d-1b6005987ac8")) continue;
 				Vec3 centerPos = new Vec3(position.getX() + (minX + maxX) / 2, position.getY() + (minY + maxY) / 2, position.getZ() + (minZ + maxZ) / 2);
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraSkullRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, minX, minY, minZ, maxX, maxY, maxZ, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
+					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
+						continue;
+					}
+					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
+					blocksCooldown.put(position, new Date().getTime());
+					break;
+				}
+			} else if (blockState.getBlock() == Blocks.redstone_block) {
+				if (!redstoneKey) continue;
+				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
+					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0, 0, 0, 1, 1, 1, eyePos, centerPos);
+					if (movingObjectPosition == null) continue;
+					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
+						continue;
+					}
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					blocksCooldown.put(position, new Date().getTime());
 					break;
@@ -202,6 +219,19 @@ public class SecretAura {
 			IBlockState blockState = world.getBlockState(blockPos);
 			if (blockState.getBlock() == Blocks.lever) {
 				blocksDone.add(blockPos);
+			} else if (blockState.getBlock() == Blocks.skull) {
+				if (packet.getBlockState().getBlock() != Blocks.air) return;
+				TileEntity tileEntity = world.getTileEntity(blockPos);
+				if (!(tileEntity instanceof TileEntitySkull)) return;
+				GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
+				if (profile == null) return;
+				String profileId = profile.getId().toString();
+				if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
+					redstoneKey = true;
+				}
+			} else if (blockState.getBlock() == Blocks.redstone_block) {
+				blocksDone.add(blockPos);
+				redstoneKey = false;
 			}
 		} else if (event.packet instanceof S22PacketMultiBlockChange) {
 			S22PacketMultiBlockChange packet = (S22PacketMultiBlockChange) event.packet;
@@ -212,6 +242,19 @@ public class SecretAura {
 				IBlockState blockState = world.getBlockState(blockPos);
 				if (blockState.getBlock() == Blocks.lever) {
 					blocksDone.add(blockPos);
+				} else if (blockState.getBlock() == Blocks.skull) {
+					if (changedBlock.getBlockState().getBlock() != Blocks.air) return;
+					TileEntity tileEntity = world.getTileEntity(blockPos);
+					if (!(tileEntity instanceof TileEntitySkull)) return;
+					GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
+					if (profile == null) return;
+					String profileId = profile.getId().toString();
+					if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
+						redstoneKey = true;
+					}
+				} else if (blockState.getBlock() == Blocks.redstone_block) {
+					blocksDone.add(blockPos);
+					redstoneKey = false;
 				}
 			}
 		}

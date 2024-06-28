@@ -55,6 +55,13 @@ public class SecretGuideConfig extends Config {
 	)
 	public static OneKeyBind secretAuraClearKeyBind = new OneKeyBind();
 
+	@Slider(
+		name = "Slot",
+		min = 0,
+		max = 9
+	)
+	public static int secretAuraSlot = 0;
+
 	public SecretGuideConfig() {
 		super(new Mod("secretguide", ModType.SKYBLOCK), "config.json");
 		initialize();
