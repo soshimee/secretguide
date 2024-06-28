@@ -176,7 +176,7 @@ public class SecretAura {
 					if (movingObjectPosition == null) continue;
 					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
 						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
-						continue;
+						break;
 					}
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					blocksCooldown.put(position, new Date().getTime());
@@ -191,7 +191,7 @@ public class SecretAura {
 					if (movingObjectPosition.sideHit == EnumFacing.DOWN) continue;
 					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
 						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
-						continue;
+						break;
 					}
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					blocksCooldown.put(position, new Date().getTime());
