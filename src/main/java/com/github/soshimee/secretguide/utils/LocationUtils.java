@@ -19,17 +19,21 @@ public class LocationUtils {
 	public LocationUtils() {
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(() -> {
-			currentLocation = LocationType.OTHER;
-			Minecraft mc = Minecraft.getMinecraft();
-			WorldClient world = mc.theWorld;
-			if (world == null) return;
-			Scoreboard scoreboard = world.getScoreboard();
-			if (scoreboard == null) return;
-			for (String line : ScoreboardUtils.getSidebarScores(scoreboard)) {
-				if (line.matches("^ §7⏣ §cThe Catac§combs §7\\((\\w+)\\)$")) {
-					currentLocation = LocationType.DUNGEONS;
-					return;
+			try {
+				currentLocation = LocationType.OTHER;
+				Minecraft mc = Minecraft.getMinecraft();
+				WorldClient world = mc.theWorld;
+				if (world == null) return;
+				Scoreboard scoreboard = world.getScoreboard();
+				if (scoreboard == null) return;
+				for (String line : ScoreboardUtils.getSidebarScores(scoreboard)) {
+					if (line.matches("^ §7⏣ §cThe Catac§combs §7\\((\\w+)\\)$")) {
+						currentLocation = LocationType.DUNGEONS;
+						return;
+					}
 				}
+			} catch (Throwable throwable) {
+				throwable.printStackTrace();
 			}
 		}, 1000, 1000, TimeUnit.MILLISECONDS);
 	}
