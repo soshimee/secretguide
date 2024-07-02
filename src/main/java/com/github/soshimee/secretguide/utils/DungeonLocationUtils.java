@@ -28,6 +28,7 @@ public class DungeonLocationUtils {
 		}
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.thePlayer;
+		if (player == null) return;
 		int prevRoomX = roomX, prevRoomZ = roomZ;
 		roomX = (int) ((player.posX + 200) / 32);
 		roomZ = (int) ((player.posZ + 200) / 32);
