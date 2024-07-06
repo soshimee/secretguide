@@ -126,6 +126,19 @@ public class SecretAura {
 					break;
 				}
 			} else if (blockState.getBlock() == Blocks.skull) {
+				TileEntity tileEntity = world.getTileEntity(position);
+				if (!(tileEntity instanceof TileEntitySkull)) continue;
+				GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
+				if (profile == null) continue;
+				String profileId = profile.getId().toString();
+				if (!Objects.equals(profileId, "26bb1a8d-7c66-31c6-82d5-a9c04c94fb02")) {
+					if (!Objects.equals(profileId, "edb0155f-379c-395a-9c7d-1b6005987ac8")) continue;
+					else if (world.getBlockState(position.down()).getBlock() == Blocks.redstone_block || world.getBlockState(position.north()).getBlock() == Blocks.redstone_block || world.getBlockState(position.south()).getBlock() == Blocks.redstone_block || world.getBlockState(position.west()).getBlock() == Blocks.redstone_block || world.getBlockState(position.east()).getBlock() == Blocks.redstone_block) {
+						redstoneKey = false;
+						blocksDone.add(position);
+						continue;
+					}
+				}
 				EnumFacing facing = (EnumFacing) blockState.getProperties().get(BlockSkull.FACING);
 				float minX, minY, minZ, maxX, maxY, maxZ;
 				if (facing == EnumFacing.NORTH) {
@@ -164,12 +177,6 @@ public class SecretAura {
 					maxY = 0.5f;
 					maxZ = 0.75f;
 				}
-				TileEntity tileEntity = world.getTileEntity(position);
-				if (!(tileEntity instanceof TileEntitySkull)) continue;
-				GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
-				if (profile == null) continue;
-				String profileId = profile.getId().toString();
-				if (!Objects.equals(profileId, "26bb1a8d-7c66-31c6-82d5-a9c04c94fb02") && !Objects.equals(profileId, "edb0155f-379c-395a-9c7d-1b6005987ac8")) continue;
 				Vec3 centerPos = new Vec3(position.getX() + (minX + maxX) / 2, position.getY() + (minY + maxY) / 2, position.getZ() + (minZ + maxZ) / 2);
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraSkullRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, minX, minY, minZ, maxX, maxY, maxZ, eyePos, centerPos);
@@ -184,6 +191,11 @@ public class SecretAura {
 				}
 			} else if (blockState.getBlock() == Blocks.redstone_block) {
 				if (!redstoneKey) continue;
+				if (world.getBlockState(position.up()).getBlock() == Blocks.skull || world.getBlockState(position.north()).getBlock() == Blocks.skull || world.getBlockState(position.south()).getBlock() == Blocks.skull || world.getBlockState(position.west()).getBlock() == Blocks.skull || world.getBlockState(position.east()).getBlock() == Blocks.skull) {
+					redstoneKey = false;
+					blocksDone.add(position);
+					continue;
+				}
 				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0, 0, 0, 1, 1, 1, eyePos, centerPos);
@@ -231,9 +243,6 @@ public class SecretAura {
 				if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
 					redstoneKey = true;
 				}
-			} else if (blockState.getBlock() == Blocks.redstone_block) {
-				blocksDone.add(blockPos);
-				redstoneKey = false;
 			}
 		} else if (event.packet instanceof S22PacketMultiBlockChange) {
 			S22PacketMultiBlockChange packet = (S22PacketMultiBlockChange) event.packet;
@@ -254,9 +263,6 @@ public class SecretAura {
 					if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
 						redstoneKey = true;
 					}
-				} else if (blockState.getBlock() == Blocks.redstone_block) {
-					blocksDone.add(blockPos);
-					redstoneKey = false;
 				}
 			}
 		}
