@@ -24,7 +24,7 @@ public class SecretGuideConfig extends Config {
 	@Slider(
 		name = "Range",
 		min = 2.1f,
-		max = 6.0f
+		max = 6.5f
 	)
 	public static float secretAuraRange = 2.1f;
 

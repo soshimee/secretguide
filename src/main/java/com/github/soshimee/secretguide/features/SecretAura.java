@@ -61,7 +61,7 @@ public class SecretAura {
 			if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
 				if (roomId == 2051424561 || roomId == 884728242 || roomId == -269974565 || roomId == 1262122263 || roomId == 1073658098 || roomId == -476788643) continue;
 				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.4375, position.getZ() + 0.5);
-				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
+				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
@@ -117,7 +117,7 @@ public class SecretAura {
 					maxZ = 0.75f;
 				} else continue;
 				Vec3 centerPos = new Vec3(position.getX() + (minX + maxX) / 2, position.getY() + (minY + maxY) / 2, position.getZ() + (minZ + maxZ) / 2);
-				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
+				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, minX, minY, minZ, maxX, maxY, maxZ, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
@@ -197,7 +197,7 @@ public class SecretAura {
 					continue;
 				}
 				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
-				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraRange) {
+				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0, 0, 0, 1, 1, 1, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					if (movingObjectPosition.sideHit == EnumFacing.DOWN) continue;
