@@ -191,6 +191,7 @@ public class SecretAura {
 				}
 			} else if (blockState.getBlock() == Blocks.redstone_block) {
 				if (!redstoneKey) continue;
+				if (player.posX < -200 || player.posZ < -200 || player.posX > 0 || player.posZ > 0) continue;
 				if (world.getBlockState(position.up()).getBlock() == Blocks.skull || world.getBlockState(position.north()).getBlock() == Blocks.skull || world.getBlockState(position.south()).getBlock() == Blocks.skull || world.getBlockState(position.west()).getBlock() == Blocks.skull || world.getBlockState(position.east()).getBlock() == Blocks.skull) {
 					redstoneKey = false;
 					blocksDone.add(position);
@@ -216,6 +217,7 @@ public class SecretAura {
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
 		clearBlocks();
+		redstoneKey = false;
 	}
 
 	@Subscribe
@@ -243,6 +245,8 @@ public class SecretAura {
 				if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
 					redstoneKey = true;
 				}
+			}  else if (blockState.getBlock() == Blocks.redstone_block) {
+				blocksDone.add(blockPos);
 			}
 		} else if (event.packet instanceof S22PacketMultiBlockChange) {
 			S22PacketMultiBlockChange packet = (S22PacketMultiBlockChange) event.packet;
@@ -263,6 +267,8 @@ public class SecretAura {
 					if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
 						redstoneKey = true;
 					}
+				} else if (blockState.getBlock() == Blocks.redstone_block) {
+					blocksDone.add(blockPos);
 				}
 			}
 		}
