@@ -157,10 +157,6 @@ public class SecretAura {
 		}
 	}
 
-	private void clickBlock() {
-
-	}
-
 	@SubscribeEvent
 	public void onWorldLoad(WorldEvent.Load event) {
 		clearBlocks();
