@@ -36,9 +36,8 @@ public class DungeonLocationUtils {
 			int cx = -185 + roomX * 32;
 			int cz = -185 + roomZ * 32;
 			List<Integer> blocks = new ArrayList<>();
-			WorldClient world = mc.theWorld;
 			for (int y = 140; y > 11; --y) {
-				int id = Block.getIdFromBlock(world.getBlockState(new BlockPos(cx, y, cz)).getBlock());
+				int id = Block.getIdFromBlock(mc.theWorld.getBlockState(new BlockPos(cx, y, cz)).getBlock());
 				if (id != 5 && id != 54) blocks.add(id);
 			}
 			currentRoomId = blocks.stream().map(String::valueOf).collect(Collectors.joining()).hashCode();

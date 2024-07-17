@@ -2,6 +2,7 @@ package com.github.soshimee.secretguide.features;
 
 import cc.polyfrost.oneconfig.events.EventManager;
 import cc.polyfrost.oneconfig.events.event.ReceivePacketEvent;
+import cc.polyfrost.oneconfig.libs.checker.units.qual.A;
 import cc.polyfrost.oneconfig.libs.eventbus.Subscribe;
 import com.github.soshimee.secretguide.config.SecretGuideConfig;
 import com.github.soshimee.secretguide.utils.*;
@@ -19,10 +20,7 @@ import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S24PacketBlockAction;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -62,7 +60,7 @@ public class SecretAura {
 				if (roomId == 2051424561 || roomId == 884728242 || roomId == -269974565 || roomId == 1262122263 || roomId == 1073658098 || roomId == -476788643) continue;
 				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.4375, position.getZ() + 0.5);
 				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
-					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375, eyePos, centerPos);
+					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, new AxisAlignedBB(0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375), eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					if (!player.isSneaking() && SecretGuideConfig.secretAuraSwingHand) player.swingItem();
@@ -72,53 +70,23 @@ public class SecretAura {
 			} else if (blockState.getBlock() == Blocks.lever) {
 				if (roomId == -109725212 || roomId == -353291158 || roomId == 1998063202 || roomId == 660384222 || roomId == -1012522341 || roomId == 660396563 || roomId == 1980639456 || roomId == 43497702 || roomId == 2014437159 || roomId == 1513261276 || roomId == 862140000 || roomId == -364886424 || roomId == -714138899 || roomId == -1489069695 || roomId == -685683836) continue;
 				BlockLever.EnumOrientation orientation = (BlockLever.EnumOrientation) blockState.getProperties().get(BlockLever.FACING);
-				float minX, minY, minZ, maxX, maxY, maxZ;
+				AxisAlignedBB aabb;
 				if (orientation == BlockLever.EnumOrientation.EAST) {
-					minX = 0.0f;
-					minY = 0.2f;
-					minZ = 0.3125f;
-					maxX = 0.375f;
-					maxY = 0.8f;
-					maxZ = 0.6875f;
+					aabb = new AxisAlignedBB(0.0f, 0.2f, 0.315f, 0.375f, 0.8f, 0.6875f);
 				} else if (orientation == BlockLever.EnumOrientation.WEST) {
-					minX = 0.625f;
-					minY = 0.2f;
-					minZ = 0.3125f;
-					maxX = 1.0f;
-					maxY = 0.8f;
-					maxZ = 0.6875f;
+					aabb = new AxisAlignedBB(0.625f, 0.2f, 0.315f, 1.0f, 0.8f, 0.6875f);
 				} else if (orientation == BlockLever.EnumOrientation.SOUTH) {
-					minX = 0.3125f;
-					minY = 0.2f;
-					minZ = 0.0f;
-					maxX = 0.6875f;
-					maxY = 0.8f;
-					maxZ = 0.375f;
+					aabb = new AxisAlignedBB(0.3125f, 0.2f, 0.0f, 0.6875f, 0.8f, 0.375f);
 				} else if (orientation == BlockLever.EnumOrientation.NORTH) {
-					minX = 0.3125f;
-					minY = 0.2f;
-					minZ = 0.625f;
-					maxX = 0.6875f;
-					maxY = 0.8f;
-					maxZ = 1.0f;
+					aabb = new AxisAlignedBB(0.3125f, 0.2f, 0.625f, 0.6875f, 0.8f, 1.0f);
 				} else if (orientation == BlockLever.EnumOrientation.UP_Z || orientation == BlockLever.EnumOrientation.UP_X) {
-					minX = 0.25f;
-					minY = 0.0f;
-					minZ = 0.25f;
-					maxX = 0.75f;
-					maxY = 0.6f;
-					maxZ = 0.75f;
+					aabb = new AxisAlignedBB(0.25f, 0.0f, 0.25f, 0.75f, 0.6f, 0.75f);
 				} else if (orientation == BlockLever.EnumOrientation.DOWN_X || orientation == BlockLever.EnumOrientation.DOWN_Z) {
-					minX = 0.25f;
-					minY = 0.4f;
-					minZ = 0.25f;
-					maxX = 0.75f;
-					maxY = 1.0f;
-					maxZ = 0.75f;
+					aabb = new AxisAlignedBB(0.25f, 0.4f, 0.25f, 0.75f, 1.0f, 0.75f);
 				} else continue;
-				Vec3 centerPos = new Vec3(position.getX() + (minX + maxX) / 2, position.getY() + (minY + maxY) / 2, position.getZ() + (minZ + maxZ) / 2);
+				Vec3 centerPos = new Vec3(position).addVector((aabb.minX + aabb.maxX) / 2, (aabb.minY + aabb.maxY) / 2, (aabb.minZ + aabb.maxZ) / 2);
 				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
-					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, minX, minY, minZ, maxX, maxY, maxZ, eyePos, centerPos);
+					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, aabb, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					if (!player.isSneaking() && SecretGuideConfig.secretAuraSwingHand) player.swingItem();
@@ -140,46 +108,21 @@ public class SecretAura {
 					}
 				}
 				EnumFacing facing = (EnumFacing) blockState.getProperties().get(BlockSkull.FACING);
-				float minX, minY, minZ, maxX, maxY, maxZ;
+				AxisAlignedBB aabb;
 				if (facing == EnumFacing.NORTH) {
-					minX = 0.25f;
-					minY = 0.25f;
-					minZ = 0.5f;
-					maxX = 0.75f;
-					maxY = 0.75f;
-					maxZ = 1.0f;
+					aabb = new AxisAlignedBB(0.25f, 0.25f, 0.5f, 0.75f, 0.75f, 1.0f);
 				} else if (facing == EnumFacing.SOUTH) {
-					minX = 0.25f;
-					minY = 0.25f;
-					minZ = 0.0f;
-					maxX = 0.75f;
-					maxY = 0.75f;
-					maxZ = 0.5f;
+					aabb = new AxisAlignedBB(0.25f, 0.25f, 0.0f, 0.75f, 0.75f, 0.5f);
 				} else if (facing == EnumFacing.WEST) {
-					minX = 0.5f;
-					minY = 0.25f;
-					minZ = 0.25f;
-					maxX = 1.0f;
-					maxY = 0.75f;
-					maxZ = 0.75f;
+					aabb = new AxisAlignedBB(0.5f, 0.25f, 0.25f, 1.0f, 0.75f, 0.75f);
 				} else if (facing == EnumFacing.EAST) {
-					minX = 0.0f;
-					minY = 0.25f;
-					minZ = 0.25f;
-					maxX = 0.5f;
-					maxY = 0.75f;
-					maxZ = 0.75f;
+					aabb = new AxisAlignedBB(0.0f, 0.25f, 0.25f, 0.5f, 0.75f, 0.75f);
 				} else {
-					minX = 0.25f;
-					minY = 0.0f;
-					minZ = 0.25f;
-					maxX = 0.75f;
-					maxY = 0.5f;
-					maxZ = 0.75f;
+					aabb = new AxisAlignedBB(0.25f, 0.0f, 0.25f, 0.75f, 0.5f, 0.75f);
 				}
-				Vec3 centerPos = new Vec3(position.getX() + (minX + maxX) / 2, position.getY() + (minY + maxY) / 2, position.getZ() + (minZ + maxZ) / 2);
+				Vec3 centerPos = new Vec3(position).addVector((aabb.minX + aabb.maxX) / 2, (aabb.minY + aabb.maxY) / 2, (aabb.minZ + aabb.maxZ) / 2);
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraSkullRange) {
-					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, minX, minY, minZ, maxX, maxY, maxZ, eyePos, centerPos);
+					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, aabb, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
 						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
@@ -197,9 +140,9 @@ public class SecretAura {
 					blocksDone.add(position);
 					continue;
 				}
-				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5);
+				Vec3 centerPos = new Vec3(position).addVector(0.5, 0.5, 0.5);
 				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
-					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, 0, 0, 0, 1, 1, 1, eyePos, centerPos);
+					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, new AxisAlignedBB(0,0,0, 1,1,1), eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					if (movingObjectPosition.sideHit == EnumFacing.DOWN) continue;
 					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
@@ -212,6 +155,10 @@ public class SecretAura {
 				}
 			}
 		}
+	}
+
+	private void clickBlock() {
+
 	}
 
 	@SubscribeEvent
