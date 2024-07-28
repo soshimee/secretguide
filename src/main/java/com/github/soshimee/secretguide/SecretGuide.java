@@ -11,8 +11,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
-@Mod(modid = "secretguide", useMetadata = true)
+import static com.github.soshimee.secretguide.SecretGuide.MOD_ID;
+
+@Mod(modid = MOD_ID, useMetadata = true)
 public class SecretGuide {
+	public static final String MOD_ID = "secretguide";
 	public static SecretGuideConfig config;
 
 	@Mod.EventHandler

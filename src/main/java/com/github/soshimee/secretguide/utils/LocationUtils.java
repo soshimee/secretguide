@@ -21,8 +21,7 @@ public class LocationUtils {
 		executor.scheduleAtFixedRate(() -> {
 			try {
 				currentLocation = LocationType.OTHER;
-				Minecraft mc = Minecraft.getMinecraft();
-				WorldClient world = mc.theWorld;
+				WorldClient world = Minecraft.getMinecraft().theWorld;
 				if (world == null) return;
 				Scoreboard scoreboard = world.getScoreboard();
 				if (scoreboard == null) return;

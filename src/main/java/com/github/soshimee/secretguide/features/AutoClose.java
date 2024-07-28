@@ -23,25 +23,20 @@ public class AutoClose {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
-		if (closeId != null) {
-			PacketUtils.sendPacket(new C0DPacketCloseWindow(closeId));
-			closeId = null;
-		}
+		if (event.phase != TickEvent.Phase.END || closeId == null) return;
+		PacketUtils.sendPacket(new C0DPacketCloseWindow(closeId));
+		closeId = null;
 	}
 
 	@Subscribe
 	public void onPacketReceive(ReceivePacketEvent event) {
-		if (!SecretGuideConfig.secretAuraAutoClose) return;
-		if (!SecretGuideConfig.secretAuraEnabled) return;
+		if (!SecretGuideConfig.secretAuraAutoClose || !SecretGuideConfig.secretAuraEnabled || !(event.packet instanceof S2DPacketOpenWindow)) return;
 		if (LocationUtils.getCurrentLocation() != LocationUtils.LocationType.DUNGEONS && !SecretGuideConfig.secretAuraNotDungeon) return;
-		if (event.packet instanceof S2DPacketOpenWindow) {
-			S2DPacketOpenWindow packet = (S2DPacketOpenWindow) event.packet;
-			if (!packet.getGuiId().equals("minecraft:chest")) return;
-			if ((packet.getWindowTitle().getFormattedText().equals("Chest§r") && packet.getSlotCount() == 27) || (packet.getWindowTitle().getFormattedText().equals("Large Chest§r") && packet.getSlotCount() == 54)) {
-				closeId = packet.getWindowId();
-				event.isCancelled = true;
-			}
+		S2DPacketOpenWindow packet = (S2DPacketOpenWindow) event.packet;
+		if (!packet.getGuiId().equals("minecraft:chest")) return;
+		if ((packet.getWindowTitle().getFormattedText().equals("Chest§r") && packet.getSlotCount() == 27) || (packet.getWindowTitle().getFormattedText().equals("Large Chest§r") && packet.getSlotCount() == 54)) {
+			closeId = packet.getWindowId();
+			event.isCancelled = true;
 		}
 	}
 }

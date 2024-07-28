@@ -1,5 +1,6 @@
 package com.github.soshimee.secretguide.mixin;
 
+import com.github.soshimee.secretguide.SecretGuide;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage;
@@ -20,7 +21,7 @@ public class MixinModList {
 	@Inject(method = "<init>(Ljava/util/List;)V", at = @At("RETURN"))
 	private void removeMod(List<ModContainer> modList, CallbackInfo ci) {
 		if (!Minecraft.getMinecraft().isIntegratedServerRunning()) {
-			modTags.remove("secretguide");
+			modTags.remove(SecretGuide.MOD_ID);
 		}
 	}
 }
