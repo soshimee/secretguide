@@ -2,7 +2,6 @@ package com.github.soshimee.secretguide.features;
 
 import cc.polyfrost.oneconfig.events.EventManager;
 import cc.polyfrost.oneconfig.events.event.ReceivePacketEvent;
-import cc.polyfrost.oneconfig.libs.checker.units.qual.A;
 import cc.polyfrost.oneconfig.libs.eventbus.Subscribe;
 import com.github.soshimee.secretguide.config.SecretGuideConfig;
 import com.github.soshimee.secretguide.utils.*;
@@ -15,6 +14,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
+import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.network.play.server.S22PacketMultiBlockChange;
 import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.network.play.server.S24PacketBlockAction;
@@ -213,6 +213,14 @@ public class SecretAura {
 				} else if (blockState.getBlock() == Blocks.redstone_block) {
 					blocksDone.add(blockPos);
 				}
+			}
+		} else if (event.packet instanceof S02PacketChat) {
+			S02PacketChat packet = (S02PacketChat) event.packet;
+			if (packet.getType() == 2) return;
+			String message = packet.getChatComponent().getUnformattedText().replaceAll("§[0-9a-fk-or]", "");
+			if (message.equals("[BOSS] Goldor: Who dares trespass into my domain?")) {
+				SecretAura.clearBlocks();
+				ChatUtils.sendModMessage("Blocks cleared!");
 			}
 		}
 	}
