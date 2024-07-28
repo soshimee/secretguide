@@ -30,7 +30,7 @@ public class SgCommand extends CommandBase {
 			SecretGuide.config.openGui();
 			ChatUtils.sendModMessage("/sg t | /sg c");
 		} else if (Objects.equals(args[0], "roomid")) {
-            ChatUtils.sendModMessage(String.valueOf(DungeonLocationUtils.getCurrentRoomId()));
+			ChatUtils.sendModMessage(String.valueOf(DungeonLocationUtils.getCurrentRoomId()));
 		} else if (args[0].startsWith("t")) {
 			SecretGuideConfig.secretAuraEnabled = !SecretGuideConfig.secretAuraEnabled;
 			ChatUtils.sendModMessage(SecretGuideConfig.secretAuraEnabled ? "Secret Aura enabled!" : "Secret Aura disabled!");
