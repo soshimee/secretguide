@@ -12,12 +12,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
-import net.minecraft.network.play.server.S02PacketChat;
-import net.minecraft.network.play.server.S22PacketMultiBlockChange;
-import net.minecraft.network.play.server.S23PacketBlockChange;
-import net.minecraft.network.play.server.S24PacketBlockAction;
+import net.minecraft.network.play.server.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.*;
@@ -31,6 +32,7 @@ public class SecretAura {
 	private static final List<BlockPos> blocksDone = new LinkedList<>();
 	private static final Map<BlockPos, Long> blocksCooldown = new HashMap<>();
 	private static boolean redstoneKey = false;
+	private static int prevSlot = -1;
 
 	public SecretAura() {
 		EventManager.INSTANCE.register(this);
@@ -62,10 +64,15 @@ public class SecretAura {
 				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, new AxisAlignedBB(0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375), eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
+					if (SecretGuideConfig.secretAuraSwapOn >= 2 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+						prevSlot = player.inventory.currentItem;
+						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
+						return;
+					}
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					if (!player.isSneaking() && SecretGuideConfig.secretAuraSwingHand) player.swingItem();
 					blocksCooldown.put(position, new Date().getTime());
-					break;
+					return;
 				}
 			} else if (blockState.getBlock() == Blocks.lever) {
 				if (roomId == -109725212 || roomId == -353291158 || roomId == 1998063202 || roomId == 660384222 || roomId == -1012522341 || roomId == 660396563 || roomId == 1980639456 || roomId == 43497702 || roomId == 2014437159 || roomId == 1513261276 || roomId == 862140000 || roomId == -364886424 || roomId == -714138899 || roomId == -1489069695 || roomId == -685683836) continue;
@@ -88,10 +95,15 @@ public class SecretAura {
 				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, aabb, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
+					if (SecretGuideConfig.secretAuraSwapOn >= 2 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+						prevSlot = player.inventory.currentItem;
+						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
+						return;
+					}
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					if (!player.isSneaking() && SecretGuideConfig.secretAuraSwingHand) player.swingItem();
 					blocksCooldown.put(position, new Date().getTime());
-					break;
+					return;
 				}
 			} else if (blockState.getBlock() == Blocks.skull) {
 				TileEntity tileEntity = world.getTileEntity(position);
@@ -124,13 +136,14 @@ public class SecretAura {
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraSkullRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, aabb, eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
-					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+					if (SecretGuideConfig.secretAuraSwapOn >= 1 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+						prevSlot = player.inventory.currentItem;
 						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
-						break;
+						return;
 					}
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					blocksCooldown.put(position, new Date().getTime());
-					break;
+					return;
 				}
 			} else if (blockState.getBlock() == Blocks.redstone_block) {
 				if (!redstoneKey) continue;
@@ -145,16 +158,21 @@ public class SecretAura {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, new AxisAlignedBB(0,0,0, 1,1,1), eyePos, centerPos);
 					if (movingObjectPosition == null) continue;
 					if (movingObjectPosition.sideHit == EnumFacing.DOWN) continue;
-					if (SecretGuideConfig.secretAuraSlot > 0 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+					if (SecretGuideConfig.secretAuraSwapOn >= 1 && player.inventory.currentItem != SecretGuideConfig.secretAuraSlot - 1) {
+						prevSlot = player.inventory.currentItem;
 						player.inventory.currentItem = SecretGuideConfig.secretAuraSlot - 1;
-						break;
+						return;
 					}
 					PacketUtils.sendPacket(new C08PacketPlayerBlockPlacement(position, movingObjectPosition.sideHit.getIndex(), player.getHeldItem(), (float) movingObjectPosition.hitVec.xCoord, (float) movingObjectPosition.hitVec.yCoord, (float) movingObjectPosition.hitVec.zCoord));
 					blocksCooldown.put(position, new Date().getTime());
-					break;
+					return;
 				}
 			}
 		}
+		if (SecretGuideConfig.secretAuraSwapBack && prevSlot >= 0) {
+			player.inventory.currentItem = prevSlot;
+		}
+		prevSlot = -1;
 	}
 
 	@SubscribeEvent
@@ -214,6 +232,20 @@ public class SecretAura {
 					blocksDone.add(blockPos);
 				}
 			}
+		} else if (event.packet instanceof S04PacketEntityEquipment) {
+			S04PacketEntityEquipment packet = (S04PacketEntityEquipment) event.packet;
+			Minecraft mc = Minecraft.getMinecraft();
+			WorldClient world = mc.theWorld;
+			Entity entity = world.getEntityByID(packet.getEntityID());
+			if (!(entity instanceof EntityArmorStand)) return;
+			if (packet.getEquipmentSlot() != 4) return;
+			ItemStack itemStack = packet.getItemStack();
+			if (itemStack == null) return;
+			if (itemStack.getItem() != Items.skull) return;
+			if (!itemStack.hasTagCompound()) return;
+			String profileId = itemStack.getTagCompound().getCompoundTag("SkullOwner").getString("Id");
+			if (!profileId.equals("26bb1a8d-7c66-31c6-82d5-a9c04c94fb02")) return;
+			blocksDone.add(new BlockPos(entity.posX, entity.posY + 2, entity.posZ));
 		} else if (event.packet instanceof S02PacketChat) {
 			S02PacketChat packet = (S02PacketChat) event.packet;
 			if (packet.getType() == 2) return;

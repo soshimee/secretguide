@@ -1,6 +1,7 @@
 package com.github.soshimee.secretguide.config;
 
 import cc.polyfrost.oneconfig.config.Config;
+import cc.polyfrost.oneconfig.config.annotations.Dropdown;
 import cc.polyfrost.oneconfig.config.annotations.KeyBind;
 import cc.polyfrost.oneconfig.config.annotations.Slider;
 import cc.polyfrost.oneconfig.config.annotations.Switch;
@@ -31,7 +32,7 @@ public class SecretGuideConfig extends Config {
 	@Slider(
 		name = "Skull Range",
 		min = 2.1f,
-		max = 4.5f
+		max = 5.0f
 	)
 	public static float secretAuraSkullRange = 2.1f;
 
@@ -55,12 +56,23 @@ public class SecretGuideConfig extends Config {
 	)
 	public static OneKeyBind secretAuraClearKeyBind = new OneKeyBind();
 
+	@Dropdown(
+		name = "Swap On",
+		options = {"None", "Skulls", "All"}
+	)
+	public static int secretAuraSwapOn = 0;
+
+	@Switch(
+		name = "Swap Back"
+	)
+	public static boolean secretAuraSwapBack = true;
+
 	@Slider(
 		name = "Slot",
-		min = 0,
+		min = 1,
 		max = 9
 	)
-	public static int secretAuraSlot = 0;
+	public static int secretAuraSlot = 1;
 
 	public SecretGuideConfig() {
 		super(new Mod("secretguide", ModType.SKYBLOCK), "config.json");
