@@ -78,19 +78,13 @@ public class SecretAura {
 				if (roomId == -109725212 || roomId == -353291158 || roomId == 1998063202 || roomId == 660384222 || roomId == -1012522341 || roomId == 660396563 || roomId == 1980639456 || roomId == 43497702 || roomId == 2014437159 || roomId == 1513261276 || roomId == 862140000 || roomId == -364886424 || roomId == -714138899 || roomId == -1489069695 || roomId == -685683836) continue;
 				BlockLever.EnumOrientation orientation = (BlockLever.EnumOrientation) blockState.getProperties().get(BlockLever.FACING);
 				AxisAlignedBB aabb;
-				if (orientation == BlockLever.EnumOrientation.EAST) {
-					aabb = new AxisAlignedBB(0.0f, 0.2f, 0.315f, 0.375f, 0.8f, 0.6875f);
-				} else if (orientation == BlockLever.EnumOrientation.WEST) {
-					aabb = new AxisAlignedBB(0.625f, 0.2f, 0.315f, 1.0f, 0.8f, 0.6875f);
-				} else if (orientation == BlockLever.EnumOrientation.SOUTH) {
-					aabb = new AxisAlignedBB(0.3125f, 0.2f, 0.0f, 0.6875f, 0.8f, 0.375f);
-				} else if (orientation == BlockLever.EnumOrientation.NORTH) {
-					aabb = new AxisAlignedBB(0.3125f, 0.2f, 0.625f, 0.6875f, 0.8f, 1.0f);
-				} else if (orientation == BlockLever.EnumOrientation.UP_Z || orientation == BlockLever.EnumOrientation.UP_X) {
-					aabb = new AxisAlignedBB(0.25f, 0.0f, 0.25f, 0.75f, 0.6f, 0.75f);
-				} else if (orientation == BlockLever.EnumOrientation.DOWN_X || orientation == BlockLever.EnumOrientation.DOWN_Z) {
-					aabb = new AxisAlignedBB(0.25f, 0.4f, 0.25f, 0.75f, 1.0f, 0.75f);
-				} else continue;
+				if (orientation == BlockLever.EnumOrientation.EAST) aabb = new AxisAlignedBB(0.0f, 0.2f, 0.315f, 0.375f, 0.8f, 0.6875f);
+				else if (orientation == BlockLever.EnumOrientation.WEST) aabb = new AxisAlignedBB(0.625f, 0.2f, 0.315f, 1.0f, 0.8f, 0.6875f);
+				else if (orientation == BlockLever.EnumOrientation.SOUTH) aabb = new AxisAlignedBB(0.3125f, 0.2f, 0.0f, 0.6875f, 0.8f, 0.375f);
+				else if (orientation == BlockLever.EnumOrientation.NORTH) aabb = new AxisAlignedBB(0.3125f, 0.2f, 0.625f, 0.6875f, 0.8f, 1.0f);
+				else if (orientation == BlockLever.EnumOrientation.UP_Z || orientation == BlockLever.EnumOrientation.UP_X) aabb = new AxisAlignedBB(0.25f, 0.0f, 0.25f, 0.75f, 0.6f, 0.75f);
+				else if (orientation == BlockLever.EnumOrientation.DOWN_X || orientation == BlockLever.EnumOrientation.DOWN_Z) aabb = new AxisAlignedBB(0.25f, 0.4f, 0.25f, 0.75f, 1.0f, 0.75f);
+				else continue;
 				Vec3 centerPos = new Vec3(position).addVector((aabb.minX + aabb.maxX) / 2, (aabb.minY + aabb.maxY) / 2, (aabb.minZ + aabb.maxZ) / 2);
 				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, aabb, eyePos, centerPos);
@@ -121,17 +115,11 @@ public class SecretAura {
 				}
 				EnumFacing facing = (EnumFacing) blockState.getProperties().get(BlockSkull.FACING);
 				AxisAlignedBB aabb;
-				if (facing == EnumFacing.NORTH) {
-					aabb = new AxisAlignedBB(0.25f, 0.25f, 0.5f, 0.75f, 0.75f, 1.0f);
-				} else if (facing == EnumFacing.SOUTH) {
-					aabb = new AxisAlignedBB(0.25f, 0.25f, 0.0f, 0.75f, 0.75f, 0.5f);
-				} else if (facing == EnumFacing.WEST) {
-					aabb = new AxisAlignedBB(0.5f, 0.25f, 0.25f, 1.0f, 0.75f, 0.75f);
-				} else if (facing == EnumFacing.EAST) {
-					aabb = new AxisAlignedBB(0.0f, 0.25f, 0.25f, 0.5f, 0.75f, 0.75f);
-				} else {
-					aabb = new AxisAlignedBB(0.25f, 0.0f, 0.25f, 0.75f, 0.5f, 0.75f);
-				}
+				if (facing == EnumFacing.NORTH) aabb = new AxisAlignedBB(0.25f, 0.25f, 0.5f, 0.75f, 0.75f, 1.0f);
+				else if (facing == EnumFacing.SOUTH) aabb = new AxisAlignedBB(0.25f, 0.25f, 0.0f, 0.75f, 0.75f, 0.5f);
+				else if (facing == EnumFacing.WEST) aabb = new AxisAlignedBB(0.5f, 0.25f, 0.25f, 1.0f, 0.75f, 0.75f);
+				else if (facing == EnumFacing.EAST) aabb = new AxisAlignedBB(0.0f, 0.25f, 0.25f, 0.5f, 0.75f, 0.75f);
+				else aabb = new AxisAlignedBB(0.25f, 0.0f, 0.25f, 0.75f, 0.5f, 0.75f);
 				Vec3 centerPos = new Vec3(position).addVector((aabb.minX + aabb.maxX) / 2, (aabb.minY + aabb.maxY) / 2, (aabb.minZ + aabb.maxZ) / 2);
 				if (eyePos.distanceTo(centerPos) <= SecretGuideConfig.secretAuraSkullRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, aabb, eyePos, centerPos);
