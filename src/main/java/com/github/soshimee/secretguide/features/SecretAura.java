@@ -105,7 +105,7 @@ public class SecretAura {
 				GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
 				if (profile == null) continue;
 				String profileId = profile.getId().toString();
-				if (!Objects.equals(profileId, "26bb1a8d-7c66-31c6-82d5-a9c04c94fb02")) {
+				if (!Objects.equals(profileId, "e0f3e929-869e-3dca-9504-54c666ee6f23")) {
 					if (!Objects.equals(profileId, "edb0155f-379c-395a-9c7d-1b6005987ac8")) continue;
 					else if (world.getBlockState(position.down()).getBlock() == Blocks.redstone_block || world.getBlockState(position.north()).getBlock() == Blocks.redstone_block || world.getBlockState(position.south()).getBlock() == Blocks.redstone_block || world.getBlockState(position.west()).getBlock() == Blocks.redstone_block || world.getBlockState(position.east()).getBlock() == Blocks.redstone_block) {
 						redstoneKey = false;
@@ -232,7 +232,7 @@ public class SecretAura {
 			if (itemStack.getItem() != Items.skull) return;
 			if (!itemStack.hasTagCompound()) return;
 			String profileId = itemStack.getTagCompound().getCompoundTag("SkullOwner").getString("Id");
-			if (!profileId.equals("26bb1a8d-7c66-31c6-82d5-a9c04c94fb02")) return;
+			if (!profileId.equals("e0f3e929-869e-3dca-9504-54c666ee6f23")) return;
 			blocksDone.add(new BlockPos(entity.posX, entity.posY + 2, entity.posZ));
 		} else if (event.packet instanceof S02PacketChat) {
 			S02PacketChat packet = (S02PacketChat) event.packet;
