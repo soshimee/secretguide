@@ -106,7 +106,7 @@ public class SecretAura {
 				if (profile == null) continue;
 				String profileId = profile.getId().toString();
 				if (!Objects.equals(profileId, "e0f3e929-869e-3dca-9504-54c666ee6f23")) {
-					if (!Objects.equals(profileId, "edb0155f-379c-395a-9c7d-1b6005987ac8")) continue;
+					if (!Objects.equals(profileId, "fed95410-aba1-39df-9b95-1d4f361eb66e")) continue;
 					else if (world.getBlockState(position.down()).getBlock() == Blocks.redstone_block || world.getBlockState(position.north()).getBlock() == Blocks.redstone_block || world.getBlockState(position.south()).getBlock() == Blocks.redstone_block || world.getBlockState(position.west()).getBlock() == Blocks.redstone_block || world.getBlockState(position.east()).getBlock() == Blocks.redstone_block) {
 						redstoneKey = false;
 						blocksDone.add(position);
@@ -191,7 +191,7 @@ public class SecretAura {
 				GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
 				if (profile == null) return;
 				String profileId = profile.getId().toString();
-				if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
+				if (profileId.equals("fed95410-aba1-39df-9b95-1d4f361eb66e")) {
 					redstoneKey = true;
 				}
 			}  else if (blockState.getBlock() == Blocks.redstone_block) {
@@ -213,7 +213,7 @@ public class SecretAura {
 					GameProfile profile = ((TileEntitySkull) tileEntity).getPlayerProfile();
 					if (profile == null) return;
 					String profileId = profile.getId().toString();
-					if (profileId.equals("edb0155f-379c-395a-9c7d-1b6005987ac8")) {
+					if (profileId.equals("fed95410-aba1-39df-9b95-1d4f361eb66e")) {
 						redstoneKey = true;
 					}
 				} else if (blockState.getBlock() == Blocks.redstone_block) {
