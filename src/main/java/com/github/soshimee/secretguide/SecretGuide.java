@@ -21,10 +21,10 @@ public class SecretGuide {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event) {
 		config = new SecretGuideConfig();
-		MinecraftForge.EVENT_BUS.register(new SecretAura());
-		MinecraftForge.EVENT_BUS.register(new AutoClose());
 		MinecraftForge.EVENT_BUS.register(new LocationUtils());
 		MinecraftForge.EVENT_BUS.register(new DungeonLocationUtils());
+		MinecraftForge.EVENT_BUS.register(new SecretAura());
+		MinecraftForge.EVENT_BUS.register(new AutoClose());
 		ClientCommandHandler.instance.registerCommand(new SgCommand());
 	}
 }

@@ -1,10 +1,7 @@
 package com.github.soshimee.secretguide.config;
 
 import cc.polyfrost.oneconfig.config.Config;
-import cc.polyfrost.oneconfig.config.annotations.Dropdown;
-import cc.polyfrost.oneconfig.config.annotations.KeyBind;
-import cc.polyfrost.oneconfig.config.annotations.Slider;
-import cc.polyfrost.oneconfig.config.annotations.Switch;
+import cc.polyfrost.oneconfig.config.annotations.*;
 import cc.polyfrost.oneconfig.config.core.OneKeyBind;
 import cc.polyfrost.oneconfig.config.data.Mod;
 import cc.polyfrost.oneconfig.config.data.ModType;
@@ -73,6 +70,60 @@ public class SecretGuideConfig extends Config {
 		max = 9
 	)
 	public static int secretAuraSlot = 1;
+
+	@Checkbox(
+		name = "Blaze",
+		subcategory = "Rooms"
+	)
+	public static boolean roomBlaze = false;
+
+	@Checkbox(
+		name = "Boulder",
+		subcategory = "Rooms"
+	)
+	public static boolean roomBoulder = true;
+
+	@Checkbox(
+		name = "Creeper Beams",
+		subcategory = "Rooms"
+	)
+	public static boolean roomCreeperBeams = true;
+
+	@Checkbox(
+		name = "Ice Fill",
+		subcategory = "Rooms"
+	)
+	public static boolean roomIceFill = false;
+
+	@Checkbox(
+		name = "Ice Path",
+		subcategory = "Rooms"
+	)
+	public static boolean roomIcePath = false;
+
+	@Checkbox(
+		name = "Teleport Maze",
+		subcategory = "Rooms"
+	)
+	public static boolean roomTeleportMaze = false;
+
+	@Checkbox(
+		name = "Three Weirdos",
+		subcategory = "Rooms"
+	)
+	public static boolean roomThreeWeirdos = false;
+
+	@Checkbox(
+		name = "Tic Tac Toe",
+		subcategory = "Rooms"
+	)
+	public static boolean roomTicTacToe = true;
+
+	@Checkbox(
+		name = "Water Board",
+		subcategory = "Rooms"
+	)
+	public static boolean roomWaterBoard = false;
 
 	public SecretGuideConfig() {
 		super(new Mod("secretguide", ModType.SKYBLOCK), "config.json");

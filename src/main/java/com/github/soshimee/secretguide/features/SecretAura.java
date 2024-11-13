@@ -41,7 +41,7 @@ public class SecretAura {
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
 		if (!SecretGuideConfig.secretAuraEnabled) return;
-		if (event.phase != TickEvent.Phase.END) return;
+		if (event.phase != TickEvent.Phase.START) return;
 		if (LocationUtils.getCurrentLocation() != LocationUtils.LocationType.DUNGEONS && !SecretGuideConfig.secretAuraNotDungeon) return;
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.thePlayer;
@@ -54,12 +54,21 @@ public class SecretAura {
 		Iterable<BlockPos> positions = BlockPos.getAllInBox(blockPos1, blockPos2);
 		long time = new Date().getTime();
 		int roomId = DungeonLocationUtils.getCurrentRoomId();
-		for (BlockPos position : positions) {
+		if (
+			(SecretGuideConfig.roomBlaze || (roomId != 1103121487 && roomId != 23134049 && roomId != -1092103153 && roomId != -2027662369)) &&
+			(SecretGuideConfig.roomBoulder || (roomId != -671152674 && roomId != 307825200 && roomId != -598953709 && roomId != -591423781)) &&
+			(SecretGuideConfig.roomCreeperBeams || (roomId != -755321869 && roomId != -1709550764)) &&
+			(SecretGuideConfig.roomIceFill || (roomId != 1328525306 && roomId != 327081838 && roomId != 161828987 && roomId != -1480765683)) &&
+			(SecretGuideConfig.roomIcePath || roomId != 1073658098) &&
+			(SecretGuideConfig.roomTeleportMaze || (roomId != 487124604 && roomId != 2089453469)) &&
+			(SecretGuideConfig.roomThreeWeirdos || roomId != -476788643) &&
+			(SecretGuideConfig.roomTicTacToe || roomId != 1958698161) &&
+			(SecretGuideConfig.roomWaterBoard || (roomId != -109725212 && roomId != -353291158 && roomId != 1998063202 && roomId != 660384222 && roomId != -1012522341 && roomId != 660396563 && roomId != 1980639456 && roomId != 43497702 && roomId != 2014437159 && roomId != 1513261276 && roomId != 862140000 && roomId != -364886424 && roomId != -714138899 && roomId != -1489069695 && roomId != -685683836))
+		) for (BlockPos position : positions) {
 			if (blocksDone.contains(position)) continue;
 			if (blocksCooldown.containsKey(position) && blocksCooldown.get(position) + 500 > time) continue;
 			IBlockState blockState = world.getBlockState(position);
 			if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
-				if (roomId == 2051424561 || roomId == 884728242 || roomId == -269974565 || roomId == 1262122263 || roomId == 1073658098 || roomId == -476788643) continue;
 				Vec3 centerPos = new Vec3(position.getX() + 0.5, position.getY() + 0.4375, position.getZ() + 0.5);
 				if (eyePos.distanceTo(new Vec3(position)) <= SecretGuideConfig.secretAuraRange) {
 					MovingObjectPosition movingObjectPosition = BlockUtils.collisionRayTrace(position, new AxisAlignedBB(0.0625, 0, 0.0625, 0.9375, 0.875, 0.9375), eyePos, centerPos);
@@ -75,7 +84,6 @@ public class SecretAura {
 					return;
 				}
 			} else if (blockState.getBlock() == Blocks.lever) {
-				if (roomId == -109725212 || roomId == -353291158 || roomId == 1998063202 || roomId == 660384222 || roomId == -1012522341 || roomId == 660396563 || roomId == 1980639456 || roomId == 43497702 || roomId == 2014437159 || roomId == 1513261276 || roomId == 862140000 || roomId == -364886424 || roomId == -714138899 || roomId == -1489069695 || roomId == -685683836) continue;
 				BlockLever.EnumOrientation orientation = (BlockLever.EnumOrientation) blockState.getProperties().get(BlockLever.FACING);
 				AxisAlignedBB aabb;
 				if (orientation == BlockLever.EnumOrientation.EAST) aabb = new AxisAlignedBB(0.0f, 0.2f, 0.315f, 0.375f, 0.8f, 0.6875f);
