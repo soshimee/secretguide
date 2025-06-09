@@ -48,7 +48,7 @@ public class SecretAura {
 		if (player == null) return;
 		WorldClient world = mc.theWorld;
 		if (world == null) return;
-		Vec3 eyePos = player.getPositionEyes(0);
+		Vec3 eyePos = player.getPositionEyes(1);
 		BlockPos blockPos1 = new BlockPos(eyePos.xCoord - SecretGuideConfig.secretAuraRange, eyePos.yCoord - SecretGuideConfig.secretAuraRange, eyePos.zCoord - SecretGuideConfig.secretAuraRange);
 		BlockPos blockPos2 = new BlockPos(eyePos.xCoord + SecretGuideConfig.secretAuraRange, eyePos.yCoord + SecretGuideConfig.secretAuraRange, eyePos.zCoord + SecretGuideConfig.secretAuraRange);
 		Iterable<BlockPos> positions = BlockPos.getAllInBox(blockPos1, blockPos2);
